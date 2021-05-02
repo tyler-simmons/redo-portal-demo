@@ -3,13 +3,39 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.3.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-brands-svg-icons": "^5.15.3",
+    "@fortawesome/free-regular-svg-icons": "^5.15.3",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@google-pay/button-react": "^2.3.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@types/firebase": "^3.2.1",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.0.1",
+    "@types/react": "^17.0.4",
+    "@types/react-dom": "^17.0.3",
+    "@types/react-router-dom": "^5.1.7",
+    "app": "link:./src",
+    "bootstrap": "^4.6.0",
+    "dateformat": "^4.5.1",
+    "eslint-config-react-app": "^6.0.0",
+    "firebase": "^8.4.3",
     "react": "^17.0.2",
+    "react-bootstrap": "^1.5.2",
+    "react-datepicker": "^3.8.0",
     "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
-    "web-vitals": "^1.0.1"
+    "react-hook-form": "^7.3.6",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^4.0.3",
+    "react-switch": "^6.0.0",
+    "react-table": "^7.7.0",
+    "typescript": "^4.2.4",
+    "web-vitals": "^1.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -34,5 +60,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/bootstrap": "^4.6.0",
+    "@types/dateformat": "^3.0.1",
+    "@types/react-datepicker": "^3",
+    "@types/react-table": "^7",
+    "@types/sass": "^1.16.0",
+    "@yarnpkg/pnpify": "^3.0.0-rc.3",
+    "sass": "^1.32.12",
+    "sass-loader": "^11.0.1"
   }
 }

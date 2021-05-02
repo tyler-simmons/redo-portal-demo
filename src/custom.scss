@@ -1,3 +1,5 @@
+$grid-columns: 24;
+
 .App {
 	text-align: center;
 }
@@ -39,3 +41,6 @@ td.auto-pay > i {
 .fix-row {
 	width: 26rem !important;
 }
+
+// Import Bootstrap and its default variables
+@import '~bootstrap/scss/bootstrap.scss';
