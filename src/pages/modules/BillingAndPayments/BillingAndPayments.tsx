@@ -42,7 +42,7 @@ export const BillingAndPayments = () => {
 					<ModuleHeading>Payments</ModuleHeading>
 					<Row>
 						<Col>
-							<Widgets.PaymentHistoryWidget />
+							<Widgets.NewPaymentHistoryWidget />
 						</Col>
 					</Row>
 				</Route>

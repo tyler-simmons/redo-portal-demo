@@ -5,7 +5,7 @@ import { Theme, EmotionWrapper } from 'app/contexts';
 import { ThemeProvider } from '@emotion/react';
 import {AppRoutes} from './AppRoutes';
 
-const App = () => {  
+const App = () => {
 	return (
 		<Theme.Provider value={Theme.default}>
 			<EmotionWrapper>

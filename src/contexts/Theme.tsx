@@ -1,8 +1,8 @@
 import React from 'react';
 
 const defaultTheme = {
-    primary: '#0e7abf',
-	secondary: '#149984',
+    primary: '#3f6786',
+	secondary: '#5faedf',
 }
 
 const ThemeContext = React.createContext(defaultTheme);

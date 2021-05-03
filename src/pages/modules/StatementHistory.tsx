@@ -1,12 +1,27 @@
-import {Container} from 'react-bootstrap'
+import {Container, Row, Col} from 'react-bootstrap'
 import {ModuleHeading} from 'app/components';
-import {StatementHistoryWidget} from 'app/widgets';
+import {StatementHistoryWidget, DocumentsWidget} from 'app/widgets';
 
 export const StatementHistory = () => {
     return (
         <Container fluid>
-            <ModuleHeading>Statement History</ModuleHeading>
-            <StatementHistoryWidget />
+            <ModuleHeading>Document Archive</ModuleHeading>
+            <Row >
+                <Col className="mb-3">
+                    <DocumentsWidget />
+                </Col>
+
+                <div className="w-100"/>
+
+                {/* <Col>
+                <StatementHistoryWidget />
+                </Col> */}
+               
+
+            
+            </Row>
+            
+            
         </Container>
     )
 }

@@ -103,7 +103,7 @@ export const Profile = () => {
 					</Col>
 					<Col>
 						<ModuleCard accent={theme.primary}>
-							<h3 className="mb-3">My Linked Accounts</h3>
+							<h3 className="mb-3">My Loans</h3>
 							{accounts.map((acc, idx) => (
 								<p key={idx}>
 									{acc.Street} - <strong>{acc.AccountNumber}</strong>
@@ -117,7 +117,7 @@ export const Profile = () => {
 								}}
 								className="w-75"
 							>
-								Manage Linked Accounts
+								Manage Loans
 							</NarrowBtn>
 						</ModuleCard>
 					</Col>

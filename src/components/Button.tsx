@@ -1,6 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import React from 'react';
+import React, {useContext} from 'react';
 import {css, SerializedStyles} from '@emotion/react';
+
+
+import {Theme} from 'app/contexts';
+
 
 const buttonBase = css`
 	display: inline-block;
@@ -38,8 +42,8 @@ const rectangle = css`
 	border-radius: 0;
 `;
 const pill = css`
-	padding-left: 3rem;
-	padding-right: 3rem;
+	padding-left: 2.75rem;
+	padding-right: 2.75rem;
 	border-radius: 1rem;
 `;
 
@@ -145,6 +149,8 @@ type ButtonProps = {
 	className?: any;
     [x:string]: any;
 };
+
+
 export const Button = ({
 	children,
 	colors,
@@ -154,9 +160,14 @@ export const Button = ({
 	rest,
 	className,
 }: ButtonProps) : JSX.Element => {
+	const theme = useContext(Theme.Context);
 	let classes = [buttonBase, rounded];
+	
 
-	colors !== undefined && classes.push(cssBtnColor(colors));
+	colors !== undefined ? classes.push(cssBtnColor(colors)) : classes.push(cssBtnColor({
+		background: theme.primary,
+		font: '#fff'
+	}));
 	shape !== undefined &&
 		ShapeMap.get(shape) !== undefined &&
 		classes.push(ShapeMap.get(shape) ?? rounded);

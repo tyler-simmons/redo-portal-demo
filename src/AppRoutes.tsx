@@ -1,30 +1,30 @@
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import {isAuthenticated} from 'app/data';
-import {Portal} from 'app/pages';
+import {Portal, Login, Registration} from 'app/pages';
 
 export const AppRoutes = () => {
     return (
         <Router>
             <Switch>
                 <Route exact path="/login">
-					{/* <Login /> */}
+					<Login />
 				</Route>
-				{/* @ts-ignore */}
+				<Route  path='/registration'>
+					<Registration />
+				</Route>
 				<ProtectedRoute path="/portal">
 					<Portal />
 				</ProtectedRoute>
-				<Route path="/testing">
-					{/* <Testing /> */}
-				</Route>
+				
 				<Route path="/">
-					{/* <Redirect to="/portal" /> */}
+					<Redirect to="/portal" />
 				</Route>
             </Switch>
         </Router>
     )
 }
 
-const ProtectedRoute = ({children, ...rest}: {children: any, rest: any}) => {
+const ProtectedRoute = ({children, ...rest}: {children: any, [x:string]: any}) => {
 	
 
 	return (

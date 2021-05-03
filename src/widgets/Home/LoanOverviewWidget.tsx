@@ -2,9 +2,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import {css} from '@emotion/react';
-import {Row, Col, Spinner} from 'react-bootstrap';
+import {Row, Col, Spinner, Modal, Form, Collapse} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faHome, faCheckCircle, faTimesCircle, faBuilding, faCar, faUser} from '@fortawesome/free-solid-svg-icons';
+import {faHome, faCheckCircle, faTimesCircle, faBuilding, faCar, faUser, faPlus, faCaretDown} from '@fortawesome/free-solid-svg-icons';
 
 import {ModuleCard, Button} from 'app/components';
 import {Theme} from 'app/contexts';
@@ -28,6 +28,7 @@ const SmallOverviewText = styled.p`
 const LargeInlineText = styled.span`
 	font-size: 2.5rem;
 	text-align: left;
+
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -68,7 +69,26 @@ const Expand = styled.div`
     flex-direction: column;
     justify-content: center;
 `;
+const CModalHeader = styled(Modal.Header)`
+    background-color: ${props => props.color ? props.color : props.theme.colors.secondary};
+    color: #fff;
+`;
 
+const FormCardHeader = styled.div`
+    background-color: ${props => props.color ? props.color : props.theme.colors.secondary};
+    display: flex;
+    flex-direction: row;
+`;
+
+const HeaderTitleContainer = styled.div`
+    flex-basis: auto;
+    flex-grow: 2;
+    padding: 0.5rem 1rem;
+`;
+const FormCardHeaderLabel = styled.h3`
+    color: #fff;
+    margin-bottom: 0;
+`;
 export const LoanOverviewWidget = ({
 	updateAccount,
 }: {
@@ -79,6 +99,11 @@ export const LoanOverviewWidget = ({
 	const [loading, setLoading] = useState(false);
 	const [currentAccount, setCurrentAccount] = useState<any>({});
     const theme = useContext(Theme.Context);
+    const [show, setShow] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
 	const getAccounts = async () => {
 		setLoading(true);
@@ -113,16 +138,84 @@ export const LoanOverviewWidget = ({
 
 	return (
         <Row>
+
+            <Modal show={show} onHide={handleClose} size='lg'>
+                <CModalHeader>
+                    <Modal.Title>Add a Loan</Modal.Title>
+                </CModalHeader>
+                <Modal.Body>
+                    <Form>
+                    <Form.Group>
+                <Form.Label >Loan Number</Form.Label>
+                <Form.Control placeholder='Account Number'></Form.Control>
+                <Form.Text>The account number of your loan or credit account</Form.Text>
+            </Form.Group>
+
+            <Form.Group>
+                <Form.Label >Zip Code</Form.Label>
+                <Form.Control placeholder='Zip Code'></Form.Control>
+                <Form.Text>Your 5 digit billing zip code</Form.Text>
+            </Form.Group>
+
+            <Form.Group>
+                <Form.Check>
+                    <Form.Check.Input />
+                    <Form.Check.Label>
+                        <span>By checking this box you agree to the Aqua Finance </span>
+                        <button
+				            style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                color: '#007bff',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                            }}
+				            aria-controls="terms-and-conditions"
+				            aria-expanded={open}
+                            onClick={(e) => {e.preventDefault(); setOpen(!open)}}
+			>
+				terms and conditions <FontAwesomeIcon icon={faCaretDown}/>
+			</button>
+			<Collapse in={open}>
+				<div id="terms-and-conditions" className="text-dark">
+					<Terms />
+				</div>
+			</Collapse>
+                    </Form.Check.Label>
+                </Form.Check>
+            </Form.Group>
+            
+            <div className="d-flex flex-row justify-content-center">
+                <Button shape="pill" colors={{ font: "#fff", background: "#6c757d" }} className="mr-2" onClick={handleClose}>Cancel</Button>
+                <Button shape="pill" onClick={handleClose}>Submit</Button>
+            </div>
+                    </Form>
+                </Modal.Body>
+                {/* <Modal.Footer className="d-flex justify-content-center">
+                    <Button onClick={handleClose} colors={{background: '#dc3545', font: '#fff'}}>
+                        Confirm
+                    </Button>
+                    <Button  onClick={handleClose} colors={{ font: "#fff", background: "#6c757d" }} >
+                        Cancel
+                    </Button>
+                    </Modal.Footer> */}
+            </Modal>
             <Col sm={24} md={24} lg={24} xl={12} className="mb-sm-4"> 
                 <ModuleCard accent={theme.primary} className="d-flex flex-column justify-content-start">
-                    <h3>My Loans</h3>
+                    <div className="d-flex justify-content-between">
+                        <h3 className="d-block">My Loans</h3>
+                        <Button shape="pill" outline onClick={handleShow} >Add Loan</Button>
+                    </div>
+                    
                     {loading ? (
                         <StyledSpinner animation="border" color={theme.primary} />
                     ) : (
                         <React.Fragment>
                             <Row>
-                                <Col>
+                                <Col >
                                     <div className="form-group mt-3 mb-3">
+                                        
                                         <StyledSelect
                                             className="form-control"
                                             value={dispAcc}
@@ -133,13 +226,13 @@ export const LoanOverviewWidget = ({
                                         >
                                             {accounts.map((acc, idx) => (
                                                 <option key={idx} value={idx}>
-                                                    Loan: {acc.AccountNumber}
+                                                    #{acc.AccountNumber}
                                                 </option>
                                             ))}
                                         </StyledSelect>
                                     </div>
                                 </Col>
-                                <Col className="d-flex flex-column justify-content-center">
+                                <Col className="d-flex flex-column justify-content-center" >
                                     <OverviewText className="mb-0">
                                         {currentAccount?.LoanType === "Auto" ? (
                                             <StyledIcon color={theme.primary} icon={faCar}/>
@@ -154,11 +247,16 @@ export const LoanOverviewWidget = ({
                                         <strong> {currentAccount?.LoanType}</strong>
                                     </OverviewText>
                                 </Col>
+                                {/* <Col >
+                                        <Button shape="pill" className="mt-3">Add Loan</Button>
+                                        
+                                </Col> */}
+
                             </Row>
 
                             {accounts.length !== 0 && (
                                 <React.Fragment>
-                                    <Row>
+                                    <Row className="mb-3">
                                         <Col>
                                             <OverviewText className="mb-1">
                                                 Borrower:{" "}
@@ -167,11 +265,15 @@ export const LoanOverviewWidget = ({
                                                 </strong>
                                             </OverviewText>
                                             <OverviewText className="mb-1">
-                                                Lender:{" "}
+                                                Co-Borrower:{" "}
                                                 <strong>
-                                                    {currentAccount?.LenderName}
+                                                    {currentAccount?.Cosigner}
                                                 </strong>
                                             </OverviewText>
+                                        </Col>
+                                        <Col>
+                                        
+                                        
                                         </Col>
                                     </Row>
                                     
@@ -194,31 +296,37 @@ export const LoanOverviewWidget = ({
                                                 </OverviewText>
                                             </Col>
                                             <Col>
-                                                <OverviewText className="mt-2">
-                                                    {currentAccount?.AutoPayEnabled ? (
-                                                        <React.Fragment>
-                                                            <StyledIcon
-                                                                color={"#4bb563"}
-                                                                icon={faCheckCircle}
-                                                            />
-                                                            AutoPay: <strong>ON</strong>
-                                                            <SmallOverviewText className="mt-2">
-                                                                {/* Next Payment:{' '}
-                                                            <strong>{currentAccount.DueDate}</strong> */}
-                                                                The amount shown above will be debited from your
-                                                                account on the due date
-                                                            </SmallOverviewText>
-                                                        </React.Fragment>
+                                                
+                                                    {!currentAccount?.AutoPayEnabled ? (
+                                                        <OverviewText className="mt-2">
+                                                            <React.Fragment>
+                                                                <StyledIcon
+                                                                    color={"#4bb563"}
+                                                                    icon={faCheckCircle}
+                                                                />
+                                                                AutoPay: <strong>ON</strong>
+                                                                <SmallOverviewText className="mt-2">
+                                                                    {/* Next Payment:{' '}
+                                                                <strong>{currentAccount.DueDate}</strong> */}
+                                                                    The amount shown above will be debited from your
+                                                                    account on the due date
+                                                                </SmallOverviewText>
+                                                            </React.Fragment>
+                                                        </OverviewText>
                                                     ) : (
                                                         <React.Fragment>
-                                                            <StyledIcon
+                                                            {/* <StyledIcon
                                                                 color={"#c82333"}
                                                                 icon={faTimesCircle}
                                                             />
-                                                            AutoPay: <strong>OFF</strong>
+                                                            AutoPay: <strong>OFF</strong> */}
+                                                            <div className="h-100 d-flex flex-column justify-content-around align-items-center py-3">
+                                                                <Button shape="pill">Turn On AutoPay</Button>
+                                                                <Button shape="pill" colors={{background: '#4bb563', font: '#fff'}}>Make a Payment</Button>
+                                                            </div>
                                                         </React.Fragment>
                                                     )}
-                                                </OverviewText>
+                                                
                                             </Col>
                                         </Row>
                                         
@@ -300,14 +408,14 @@ export const LoanOverviewWidget = ({
                     </ShadedBg>
                     
 
-                    <Row className="mt-4">
+                    {/* <Row className="mt-4">
                         <Col>
                           <Button shape="pill" colors={{background: theme.primary, font: '#fff'}} outline>Full Details</Button>
                         </Col>
                         <Col>
                           <Button shape="pill" colors={{background: '#4bb563', font: '#fff'}}>Make a Payment</Button>
                         </Col>
-                    </Row>
+                    </Row> */}
 
                 </ModuleCard>
             </Col>
@@ -315,6 +423,15 @@ export const LoanOverviewWidget = ({
 		
 	);
 };
+
+const Terms = () => {
+	return (
+		<React.Fragment>
+			<p>You agree that by accessing this Site, you have read, understood, and agree to be bound by all of these Terms and Conditions. If you do not agree with all of these Terms and Conditions, then you are expressly prohibited from using the Site and you must discontinue use immediately. <a href='#' target="_blank" rel="noopener noreferrer">View Full Terms and Conditions</a></p>
+		</React.Fragment>
+		
+	)
+}
 
 interface ColorOverrideProp {
     color?: string;

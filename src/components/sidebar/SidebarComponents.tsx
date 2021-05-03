@@ -85,12 +85,12 @@ export const SideLink = styled(NavLink)`
 	}
 	&:hover {
 		color: #fafafa;
-		background-color: ${props => props.theme.colors.primary};
+		background-color: ${props => props.theme.colors.secondary};
 		text-decoration: none;
 	}
 	&.active {
 		color: #fafafa;
-		background-color: ${props => props.theme.colors.primary};
+		background-color: ${props => props.theme.colors.secondary};
 	}
 
 	&.active > div > span > .spin {
@@ -124,12 +124,12 @@ export const SideLinkSubMenuItem = styled(NavLink)`
 	padding-bottom: 0.5rem;
 	&:hover {
 		color: #fafafa;
-		background-color: ${props => props.theme.colors.primary};
+		background-color: ${props => props.theme.colors.secondary};
 		text-decoration: none;
 	}
 	&.active {
 		color: #fafafa;
-		background-color: ${props => props.theme.colors.primary};
+		background-color: ${props => props.theme.colors.secondary};
 	}
 `;
 

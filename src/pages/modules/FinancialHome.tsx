@@ -34,10 +34,10 @@ export const FinancialHome = () => {
 				</Col> */}
 			</Row>
 			<Row className="mt-4">
-				<Col sm={15}>
+				<Col sm={12}>
 					<HW.RecentActivityWidget />
 				</Col>
-				<Col sm={9}>
+				<Col sm={12}>
 					<HW.DashboardMessageWidget />
 				</Col>
 			</Row>

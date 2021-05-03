@@ -40,6 +40,9 @@ export const PortalRoutes = () => {
                         usage
                         {/* <Usage /> */}
                     </Route>
+                    <Route path="/portal/payment-history">
+                        <Modules.PaymentHistory />
+                    </Route>
                     <Route path="/portal/service">
                         service
                         {/* <ServiceRequests /> */}

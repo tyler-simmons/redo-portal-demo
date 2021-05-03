@@ -3,7 +3,9 @@ import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 import {css} from '@emotion/react';
 
-import {Button, ModuleCard} from 'app/components';
+import {Image} from 'react-bootstrap';
+
+import {Button, ModuleCard, Heading, SubHeading} from 'app/components';
 import {Theme} from 'app/contexts';
 
 const MessageTitle = styled.p`
@@ -28,21 +30,25 @@ const MessageTextAlt = styled.p`
 	cursor: pointer;
 `;
 
+const IImg = styled.img`
+	display: block;
+	max-width: 100%;
+`;
+
 export const DashboardMessageWidget = () => {
 	const theme = useContext(Theme.Context);
 	return (
-		<ModuleCard className="px-0 py-0 h-100 messagingCard bg-dark" accent={theme.primary} css={css`
-		background-image: url("${process.env.PUBLIC_URL + 'marketing-img.png'}");
-		background-position: center;
-		background-size: cover;`}>
+		<ModuleCard  accent={theme.primary}>
 
-			<div className="d-flex flex-column justify-content-end h-100">
-				<div className="text-left ml-5">
-					{/* <MessageTitle>Marketing Message Placeholder</MessageTitle> */}
-					{/* <MessageText>Take the pledge</MessageText>
-					<MessageTextAlt>Learn More</MessageTextAlt> */}
+			<div>
+				<h3>Amortization Schedule</h3>
+				<div>
+				<IImg src={`${process.env.PUBLIC_URL}/content-img.png`} className="d-block"/>
 				</div>
+				
+
 			</div>
+			
 			
 
 			{/* <MessageContainer>

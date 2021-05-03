@@ -179,11 +179,11 @@ export const MakeAPayment = () => {
 						
 						<Form.Check type="radio" name="amountSelection" id="lastStatementRad" className="mb-3">
 							<Form.Check.Input type="radio" name="amountSelection" checked/>
-							<Form.Check.Label>{`Normal Payment Amount: $${currentAccount?.PaymentAmount}`}</Form.Check.Label>
+							<Form.Check.Label>{`Normal Payment Amount: $${currentAccount?.PaymentAmount?.toLocaleString("en-US")}`}</Form.Check.Label>
 						</Form.Check>
 						<Form.Check type="radio" name="amountSelection" id="currentBalanceRad" >
 							<Form.Check.Input type="radio" name="amountSelection"/>
-							<Form.Check.Label>{`Payoff Amount: $${currentAccount?.PayoffAmount}`}</Form.Check.Label>
+							<Form.Check.Label>{`Payoff Amount: $${currentAccount?.PayoffAmount?.toLocaleString("en-US")}`}</Form.Check.Label>
 						</Form.Check>
 						<small className="form-text text-muted mb-3">
 							Note: If current balance document does not reflect recent
@@ -215,7 +215,7 @@ export const MakeAPayment = () => {
 					<Form.Check
 						type="radio"
 						id="5"
-						label={`Statement Due Date: ${currentAccount?.DueDate}`}
+						label={`Payment Due Date: ${currentAccount?.DueDate}`}
 						className="mb-2"
 						name="paymentDate"
 						checked

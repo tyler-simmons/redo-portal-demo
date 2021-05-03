@@ -1,15 +1,22 @@
 import {useState, useEffect, useContext} from 'react';
 import {useHistory} from 'react-router-dom';
-import {Container, Form} from 'react-bootstrap';
-import {faBuilding, faHome} from '@fortawesome/free-solid-svg-icons';
+import {Container, Form, Collapse} from 'react-bootstrap';
+import {faBuilding, faHome, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
 
-
+import styled from '@emotion/styled';
 
 import {db} from 'app/data';
 import {Theme} from 'app/contexts';
 import {Button} from 'app/components';
 
 import * as C from './Components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+
+const HIcon = styled(FontAwesomeIcon)`
+	cursor: pointer;
+`;
+
 
 export const EnrollInAutoPay = ({ updateAccount }: any) => {
 	const [key, setKey] = useState("1");
@@ -19,6 +26,8 @@ export const EnrollInAutoPay = ({ updateAccount }: any) => {
 	const [dispAcc, setDispAcc] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [currentAccount, setCurrentAccount] = useState<any>({});
+
+	const [s, setS] = useState(false);
 
 	let history = useHistory();
 
@@ -55,7 +64,8 @@ export const EnrollInAutoPay = ({ updateAccount }: any) => {
 			<div>
 				<C.SubHeading  className="mb-3">About Enrolling in AutoPay</C.SubHeading>
 				<p className="w-75 mb-4">
-					If your account is already being automatically debited from one of our other payment options, please contact Level One to cancel any existing AutoPay arrangements prior to new AutoPay enrollments. This will ensure that duplicate payments are not made on your account.
+					If your account is already being automatically debited from one of our other payment options, please cancel any existing AutoPay arrangements prior to new AutoPay enrollments. This will ensure that duplicate payments are not made on your account. 
+					By enrolling in AutoPay you are authorizing your account to be debited by the amount due on your loan on the payment date selected below.
 				</p>
 				<C.SubHeading className="mb-3">
 					Select an Account
@@ -128,14 +138,20 @@ export const EnrollInAutoPay = ({ updateAccount }: any) => {
 				<C.SubHeading>
 					End Date
 				</C.SubHeading>
-				<p className="w-75 mb-1">If <strong>indefinitely</strong> is chosen, payments will continue automatically through the end of payment term. AutoPay can be cancelled at any time.</p>
+				
+					
 				<div className="form-group w-25 mb-4">
 					
 						<fieldset>
 							
 							<Form.Check type="radio" name="typeSelection" id="lastStatementRad" className="mb-3">
 								<Form.Check.Input type="radio" name="typeSelection" checked/>
-								<Form.Check.Label>Indefinitely</Form.Check.Label>
+								<Form.Check.Label>Indefinitely <HIcon icon={faInfoCircle} color={theme.secondary} onClick={() => {setS(!s)}} className="ml-2"/></Form.Check.Label>
+								<Collapse in={s}>
+								<Form.Text>If <strong>indefinitely</strong> is chosen, payments will continue automatically. For loans, payments will continue until the end of the repayment term. 
+				For revolving credit products, recurring payments will be based on the minimum (percentage of limiter balance) or your specified amount. Autopay can be cancelled at any time.</Form.Text>
+								</Collapse>
+								
 							</Form.Check>
 							
 							<Form.Check type="radio" name="typeSelection" id="currentBalanceRad" className="mb-2">
@@ -185,7 +201,7 @@ export const EnrollInAutoPay = ({ updateAccount }: any) => {
 					>
 						Next
 					</Button>
-					<small>Your AutoPay will begin starting with your next payment (unless otherwise scheduled).</small>
+					<small>Your AutoPay will begin starting with your next payment.</small>
 					
 
 				
@@ -207,7 +223,7 @@ export const ConfirmAutoPay = () => {
 			<div className="d-flex justify-content-start align-items-center">
 				<div className="mr-4">
 					<C.AccountLine>2687143152</C.AccountLine>
-					<C.AddressLine>123 Street Rd</C.AddressLine>
+					<C.AddressLine>John Smith</C.AddressLine>
 					<p>Payment Method: <strong>VISA_1234 - Primary Debit</strong></p>
 				</div>
 				
