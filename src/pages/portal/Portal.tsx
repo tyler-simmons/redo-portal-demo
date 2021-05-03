@@ -4,14 +4,43 @@ import {PortalRoutes} from './PortalRoutes';
 
 import {Toast} from 'react-bootstrap';
 
+import {Navbar, Nav, NavDropdown, Form, FormControl, Button} from 'react-bootstrap';
+import styled from '@emotion/styled';
+import {NavLink} from 'react-router-dom';
+
 const {TopLevel: TopLevelCtr, Side: SideCtr, Main: MainCtr} = DesktopContainers;
+
+const SmallNavLink = styled(NavLink)`
+
+`;
 
 export const Portal = () => {
     const {width, height} = useWindowSize();
 
+
+    if (width && width < 576) {
+        return (
+            <div>
+                <Navbar bg="light" expand="lg">
+                    <Navbar.Brand href="#">
+                        <img src="/sidebar-logo.png" width="80"/>
+                    </Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto">
+                            <SmallNavLink exact to="/portal/">Home</SmallNavLink>
+                        </Nav>
+                        
+                    </Navbar.Collapse>
+                </Navbar>
+                <h1>Small version</h1>
+            </div>
+            
+        )
+    }
+
     return (
         <TopLevelCtr>
-
             <SideCtr>
                 <Sidebar/>
             </SideCtr>
