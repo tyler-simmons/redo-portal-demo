@@ -2,13 +2,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import {css} from '@emotion/react';
-import {Row, Col, Spinner, Modal, Form, Collapse} from 'react-bootstrap';
+import {Row, Col, Spinner, Modal, Form, Collapse, Alert} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faHome, faCheckCircle, faTimesCircle, faBuilding, faCar, faUser, faPlus, faCaretDown} from '@fortawesome/free-solid-svg-icons';
+import {useForm} from 'react-hook-form';
 
 import {ModuleCard, Button} from 'app/components';
 import {Theme} from 'app/contexts';
-import { db } from "app/data";
+import { db, auth, getAccounts, getPayments, searchAccount, linkAccount } from "app/data";
 
 const OverviewText = styled.p`
 	font-size: 1.2rem;
@@ -101,32 +102,33 @@ export const LoanOverviewWidget = ({
     const theme = useContext(Theme.Context);
     const [show, setShow] = useState(false);
     const [open, setOpen] = useState(false);
+    
+    const [load, setLoad] = useState(false);
+    const [msg, setMsg] = useState({
+        show: false,
+        variant: 'danger',
+        msg: 'Unable to locate account'
+    });
+    const [stageAcc, setStageAcc] = useState<any>();
+
+    const {register, handleSubmit} = useForm();
 
     const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+    const handleShow = () => setShow(true);
 
-	const getAccounts = async () => {
+	const loadAccounts = async () => {
 		setLoading(true);
-		let tempAccounts: any[] = [];
+        let tempAccounts = await getAccounts(auth.currentUser?.email ?? '');
         
+        console.log('tempacc', tempAccounts);
 
-		db.collection("loanAccounts")
-			.get()
-			// @ts-ignore
-			.then((docs) => {
-				// @ts-ignore
-				docs.forEach((acc) => {
-					tempAccounts.push(acc.data());
-				});
-				setAccounts(tempAccounts);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
-	};
+        setAccounts(tempAccounts);
+        setLoading(false);
+    };
 
 	useEffect(() => {
-		getAccounts();
+        console.log(auth.currentUser);
+		loadAccounts();
 	}, []);
 
 	useEffect(() => {
@@ -134,6 +136,38 @@ export const LoanOverviewWidget = ({
 		updateAccount && updateAccount(accounts[dispAcc]);
 	}, [dispAcc, accounts]);
 
+    const onSubmit = async (data: any) => {
+        setLoad(true);
+        let ac = await searchAccount(data.accountNumber, data.zipCode);
+
+        setLoad(false);
+        
+        if (!ac) {
+            setMsg({
+                show: true,
+                variant: 'danger',
+                msg: 'Unable to locate account'
+            })
+        } else {
+            setMsg({
+                show: true,
+                variant: 'success',
+                msg: 'Account located successfully'
+            });
+
+            setStageAcc(ac);
+        }
+
+        console.log('search query', ac);
+    }
+
+    const processLink = async () => {
+        let num = stageAcc.AccountNumber;
+        await linkAccount(auth.currentUser?.email ?? '', num);
+        await loadAccounts();
+        setDispAcc(stageAcc);
+        handleClose();
+    }
 	
 
 	return (
@@ -144,62 +178,96 @@ export const LoanOverviewWidget = ({
                     <Modal.Title>Add a Loan</Modal.Title>
                 </CModalHeader>
                 <Modal.Body>
-                    <Form>
-                    <Form.Group>
-                <Form.Label >Loan Number</Form.Label>
-                <Form.Control placeholder='Account Number'></Form.Control>
-                <Form.Text>The account number of your loan or credit account</Form.Text>
-            </Form.Group>
 
-            <Form.Group>
-                <Form.Label >Zip Code</Form.Label>
-                <Form.Control placeholder='Zip Code'></Form.Control>
-                <Form.Text>Your 5 digit billing zip code</Form.Text>
-            </Form.Group>
+                    {stageAcc 
+                    ? (
+                        <div>
+                            <h3 className="mb-4">Confirm Loan Details</h3>
+                            <Row>
+                                <Col><span>Account Number:</span></Col>
+                                <Col><span className="font-weight-bold">{stageAcc?.AccountNumber}</span></Col>
+                            </Row>
+                            <hr></hr>
+                            <Row>
+                                <Col><span>Borrowers:</span></Col>
+                                <Col><span className="font-weight-bold">{stageAcc?.Borrower} (primary) | {stageAcc?.Cosigner && <span>{stageAcc?.Cosigner} (Co-Borrower)</span>}</span></Col>
+                            </Row>
+                            <hr></hr>
+                            <Row>
+                                <Col><span>Type:</span></Col>
+                                <Col><span className="font-weight-bold">{stageAcc?.LoanType}</span></Col>
+                            </Row>
+                            <hr></hr>
+                            <Row>
+                                <Col><span>Loan Amount:</span></Col>
+                                <Col><span className="font-weight-bold">${stageAcc?.OriginalLoanAmount.toLocaleString("en-US")}</span></Col>
+                            </Row>
+                            
+                            <div className="d-flex flex-row justify-content-center mt-4">
+                                    <Button shape="pill" colors={{ font: "#fff", background: "#6c757d" }} className="mr-2" onClick={handleClose}>Cancel</Button>
+                                    <Button shape="pill" onClick={processLink}>
+                                        <span className="mr-2">Confirm</span>
+                                        {load && <Spinner animation="border" size="sm" />}
+                                    </Button>
+                            </div>
 
-            <Form.Group>
-                <Form.Check>
-                    <Form.Check.Input />
-                    <Form.Check.Label>
-                        <span>By checking this box you agree to the Aqua Finance </span>
-                        <button
-				            style={{
-                                background: 'none',
-                                border: 'none',
-                                padding: 0,
-                                color: '#007bff',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                            }}
-				            aria-controls="terms-and-conditions"
-				            aria-expanded={open}
-                            onClick={(e) => {e.preventDefault(); setOpen(!open)}}
-			>
-				terms and conditions <FontAwesomeIcon icon={faCaretDown}/>
-			</button>
-			<Collapse in={open}>
-				<div id="terms-and-conditions" className="text-dark">
-					<Terms />
-				</div>
-			</Collapse>
-                    </Form.Check.Label>
-                </Form.Check>
-            </Form.Group>
-            
-            <div className="d-flex flex-row justify-content-center">
-                <Button shape="pill" colors={{ font: "#fff", background: "#6c757d" }} className="mr-2" onClick={handleClose}>Cancel</Button>
-                <Button shape="pill" onClick={handleClose}>Submit</Button>
-            </div>
-                    </Form>
+                        </div>
+                    )
+                    : (
+                        <Form onSubmit={handleSubmit(onSubmit)}>
+                                {msg.show && <Alert variant={msg.variant}>{msg.msg}</Alert> }
+
+                                <Form.Group>
+                                    <Form.Label >Loan Number</Form.Label>
+                                    <Form.Control placeholder='Account Number' {...register('accountNumber')}></Form.Control>
+                                    <Form.Text>The account number of your loan or credit account</Form.Text>
+                                </Form.Group>
+
+                                <Form.Group>
+                                    <Form.Label >Zip Code</Form.Label>
+                                    <Form.Control placeholder='Zip Code' {...register('zipCode')}></Form.Control>
+                                    <Form.Text>Your 5 digit billing zip code</Form.Text>
+                                </Form.Group>
+
+                                <Form.Group>
+                                    <Form.Check>
+                                        <Form.Check.Input />
+                                        <Form.Check.Label>
+                                            <span>By checking this box you agree to the Aqua Finance </span>
+                                            <button
+                                                style={{
+                                                    background: 'none',
+                                                    border: 'none',
+                                                    padding: 0,
+                                                    color: '#007bff',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 'bold',
+                                                }}
+                                                aria-controls="terms-and-conditions"
+                                                aria-expanded={open}
+                                                onClick={(e) => {e.preventDefault(); setOpen(!open)}}>terms and conditions <FontAwesomeIcon icon={faCaretDown}/>
+                                            </button>
+                                            <Collapse in={open}>
+                                                <div id="terms-and-conditions" className="text-dark">
+                                                    <Terms />
+                                                </div>
+                                            </Collapse>
+                                        </Form.Check.Label>
+                                    </Form.Check>
+                                </Form.Group>
+                    
+                                <div className="d-flex flex-row justify-content-center">
+                                    <Button shape="pill" colors={{ font: "#fff", background: "#6c757d" }} className="mr-2" onClick={handleClose}>Cancel</Button>
+                                    <Button shape="pill">
+                                        <span className="mr-2">Submit</span>
+                                        {load && <Spinner animation="border" size="sm" />}
+                                    </Button>
+                                </div>
+                            </Form>
+                    )}
+                    
                 </Modal.Body>
-                {/* <Modal.Footer className="d-flex justify-content-center">
-                    <Button onClick={handleClose} colors={{background: '#dc3545', font: '#fff'}}>
-                        Confirm
-                    </Button>
-                    <Button  onClick={handleClose} colors={{ font: "#fff", background: "#6c757d" }} >
-                        Cancel
-                    </Button>
-                    </Modal.Footer> */}
+                
             </Modal>
             <Col sm={24} md={24} lg={24} xl={12} className="mb-sm-4"> 
                 <ModuleCard accent={theme.primary} className="d-flex flex-column justify-content-start">
@@ -297,7 +365,7 @@ export const LoanOverviewWidget = ({
                                             </Col>
                                             <Col>
                                                 
-                                                    {!currentAccount?.AutoPayEnabled ? (
+                                                    {currentAccount?.AutoPayEnabled ? (
                                                         <OverviewText className="mt-2">
                                                             <React.Fragment>
                                                                 <StyledIcon

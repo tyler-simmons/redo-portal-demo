@@ -6,3 +6,4 @@ export * from './containers';
 export * from './navbar';
 export * from './sidebar';
 export * from './text';
+export * from './layout';
